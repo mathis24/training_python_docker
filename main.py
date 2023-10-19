@@ -37,9 +37,9 @@ DEFAULT_LEVEL = logging.INFO
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-l', '--level', action='store', 
-                    dest='logging_level', 
-                    default="info", 
+parser.add_argument('-l', '--level', action='store',
+                    dest='logging_level',
+                    default="info",
                     help='level of logging')
 
 results = parser.parse_args()
@@ -65,8 +65,8 @@ def get_level(levelname:str):
 
 
 def set_logger(g_logger, level):
-    formatter = logging.Formatter("[%(name)s %(levelname)s]-%(asctime)s %(message)s","%Y-%m-%d %H:%M:%S") # le format de date n'est pas necessaire mais sans cela, date avec les millisecondes
-
+    formatter = logging.Formatter("[%(name)s %(levelname)s]-%(asctime)s %(message)s","%Y-%m-%d %H:%M:%S") 
+    
     # file handler
     fileHandler = logging.handlers.RotatingFileHandler('myserver.log', maxBytes=1024*1024, backupCount=3)
     fileHandler.setFormatter(formatter)
