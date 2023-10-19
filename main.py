@@ -35,14 +35,17 @@ DEFAULT_LEVEL = logging.INFO
 # #################################
 # Parse command line
 
-parser = argparse.ArgumentParser()
+def parser_cmdline():
+    parser = argparse.ArgumentParser()
 
-parser.add_argument('-l', '--level', action='store',
-                    dest='logging_level',
-                    default="info",
-                    help='level of logging')
+    parser.add_argument('-l', '--level', action='store',
+                        dest='logging_level',
+                        default="info",
+                        help='level of logging')
 
-results = parser.parse_args()
+    results = parser.parse_args()
+    
+    return results
 
 # # #################################
 # Logger
@@ -153,8 +156,11 @@ def get_currencies(url:str, lcurrencies:list[str]) -> tuple[int, dict[str, float
 # Main
 
 if __name__ == "__main__":
+    # parse command line arguments
+    argline = parser_cmdline()
+    
     # set logger level and attach handlers
-    level = get_level(results.logging_level)
+    level = get_level(argline.logging_level)
     set_logger(g_logger)
   
     conn = get_connector(DB_HOST, DB_PORT, DB_NAME, USERNAME, PASSWORD)
