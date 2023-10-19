@@ -49,7 +49,7 @@ results = parser.parse_args()
 
 def get_level(levelname:str):
     # could be simpler with logging._nameToLevel
-    
+
     levelname = levelname.lower()
     dlevel = {
         "debug": logging.DEBUG,
@@ -65,8 +65,8 @@ def get_level(levelname:str):
 
 
 def set_logger(g_logger, level):
-    formatter = logging.Formatter("[%(name)s %(levelname)s]-%(asctime)s %(message)s","%Y-%m-%d %H:%M:%S") 
-    
+    formatter = logging.Formatter("[%(name)s %(levelname)s]-%(asctime)s %(message)s","%Y-%m-%d %H:%M:%S")
+  
     # file handler
     fileHandler = logging.handlers.RotatingFileHandler('myserver.log', maxBytes=1024*1024, backupCount=3)
     fileHandler.setFormatter(formatter)
@@ -80,7 +80,7 @@ def set_logger(g_logger, level):
     g_logger.addHandler(streamHandler)
 
     g_logger.setLevel(level) # by default warning is the lowest (CRITICAL 50, ERROR 40, WARNING 30, INFO 20, DEBUG 10)
-    
+  
 
 # #################################
 # DB connection
@@ -108,14 +108,14 @@ def insert_values_in_db(conn, ts:int, dvalues:dict[str,float]) -> None:
     """
     dt = datetime.utcfromtimestamp(ts)
     sdt = dt.strftime("%Y-%m-%d %H:%M:%S")
-    
+  
     cursor = conn.cursor()
     for k, v in dvalues.items():
         cmd = f'INSERT INTO {TABLENAME} VALUES ("{sdt}", "{k}", {v})'
         cursor.execute(cmd)
     cursor.close()
     conn.commit()
-    
+  
 
 # #################################
 # Rest API call
@@ -133,20 +133,20 @@ def get_currencies(url:str, lcurrencies:list[str]) -> tuple[int, dict[str, float
     Returns:
         tuple[int, dict[str, float]]: (timestamp, dict[currency code, exchange rate])
     """
-    
+  
     response = requests.get(url)
-    
+  
     if response.status_code >= 300:
         g_logger.error(f"get {url} failed")
         return (None, None)
-    
+  
     drep = response.json()
 
     # put result in dictionary
     dretval = {}
     for currency, val in drep["quotes"].items(): # currency s.a. "USDEUR"
         dretval[currency.lstrip('USD')] = val
-        
+      
     return (drep["timestamp"], dretval)
 
 # #################################
@@ -156,20 +156,20 @@ if __name__ == "__main__":
     # set logger level and attach handlers
     level = get_level(results.logging_level)
     set_logger(g_logger)
-    
+  
     conn = get_connector(DB_HOST, DB_PORT, DB_NAME, USERNAME, PASSWORD)
     g_logger.info("db connected")
-    
+  
     url = get_url()
     g_logger.debug(f"url is: {url}")
-    
+  
     while True:
         g_logger.info("Get exchange rates ...")
         timestamp, dvalues = get_currencies(url, CURRENCIES)
         if timestamp:
             insert_values_in_db(conn, timestamp, dvalues)
             g_logger.info(f"Insert done: {len(dvalues)} exchange rates")
-            
+          
         g_logger.info(f"Wait {WAITING_TIME} secs ...")
         time.sleep(WAITING_TIME)
-            
+          
