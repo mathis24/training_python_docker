@@ -38,7 +38,7 @@ DEFAULT_LEVEL = logging.INFO
 def parser_cmdline():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-l', '--level', action='store',
+    parser.add_argument('-l', "--level", action='store',
                         dest='logging_level',
                         default="info",
                         help='level of logging')
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     
     # set logger level and attach handlers
     level = get_level(argline.logging_level)
-    set_logger(g_logger)
+    set_logger(g_logger, level)
   
     conn = get_connector(DB_HOST, DB_PORT, DB_NAME, USERNAME, PASSWORD)
     g_logger.info("db connected")

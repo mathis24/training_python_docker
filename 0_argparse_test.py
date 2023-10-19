@@ -22,6 +22,7 @@ parser.add_argument('-a', "--arg-example", action='store',
                     type=int,
                     help='Store a simple value')
 
+
 parser.add_argument('-t', action='store_true', default=False,
                     dest='boolean_switch',
                     help='Set a switch to true')
